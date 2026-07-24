@@ -61,9 +61,6 @@ public class AerodynamicCalculator
 
         // Input Specifications
         InputSpecifications();
-        // ----- 設計値の保存 ---------------------------------------------------------------
-        aero.centerOfMassDefault = aero.PlaneRigidbody.centerOfMass.x; // 設計上の全体重心位置[m]を保存
-        // --------------------------------------------------------------------------------
 
         //pitchGravityPilotS = ((PlaneRigidbody.mass*pitchGravity)-(massAircraft*centerOfMassAircraft))/massPilot;
         //Debug.Log(massAircraft+","+centerOfMassAircraft+","+massPilot+","+gm.game.lengthForward+","+gm.game.lengthBackward);
@@ -174,7 +171,7 @@ public class AerodynamicCalculator
         {
             //↓必要な処理
             // dr = ((JoyStickNow - gm.game.JoyStick0) / gm.game.JoyStickFactor) * drMAX * gm.game.RudderRandValue;
-            aero.dr = aero.drMAX * SerialHandler.rudder; // ラダー駆動角
+            aero.dr = aero.drMAX * SerialHandler.rudder * gm.game.RudderRandValue; // ラダー駆動角
             // Debug.Log($"dr: {dr}");
         }
 
@@ -269,6 +266,11 @@ public class AerodynamicCalculator
 
     public void CalculatorInitialize()
     {
+        if (Config.EnableDynamicPitchInertia)　// ピッチの慣性モーメントを可変に
+        {
+            DynamicPitchInertiaInit();
+        }
+
         // Set take-off speed
         if (GameManager.instance.game.FlightMode == "BirdmanRally")
         {
@@ -299,7 +301,12 @@ public class AerodynamicCalculator
 
     public void CalculatorFixedUpdate()
     {
-        //Debug.Log("isoSim1 FixedUpdate");
+    　　　　if (Config.EnableDynamicPitchInertia)　// ピッチの慣性モーメントを可変に
+    　　　　{
+    　　　　    DynamicPitchInertiaFixedUpdate();
+    　　　　}
+
+    　　　　//Debug.Log("isoSim1 FixedUpdate");
         //入力系統
         //リジットボディに代入
         aero.PlaneRigidbody.centerOfMass = new Vector3(aero.centerOfMass, aero.PlaneRigidbody.centerOfMass.y, aero.PlaneRigidbody.centerOfMass.z);
@@ -513,6 +520,42 @@ public class AerodynamicCalculator
         aero.phi = -Mathf.Atan(-C32 / C22) * Mathf.Rad2Deg;
         aero.theta = -Mathf.Asin(C12) * Mathf.Rad2Deg;
         aero.psi = -Mathf.Atan(-C13 / C11) * Mathf.Rad2Deg;
+    }
+
+    void DynamicPitchInertiaInit()
+    {
+        if (aero.massPilotDefault == 0.0f)
+        {
+            aero.massPilotDefault = 55.0f;
+        }
+
+        // 定常においてはパイロット体重によるモーメントと空虚重量によるモーメントの和が設計上の重心位置と等しくなることから，設計上のパイロットの重心位置 pilotCenterOfMassDefaultを求める
+        float centerOfMassPilotDefault = (aero.PlaneRigidbody.mass * aero.centerOfMassDefault - aero.massAircraft * aero.centerOfMassAircraft) / aero.massPilot;
+        // 設計値の慣性モーメントからパイロット（質点）による慣性モーメントを引き算して，空虚のx = 0における慣性モーメント IyyAircraftOriginを求める
+        float IyyAircraftOrigin = AircraftData.inertiaTensor.z - aero.massPilot * Mathf.Pow(centerOfMassPilotDefault, 2);
+        // 平行軸の定理の逆を用いて，空虚の機体重心位置における慣性モーメント IyyAircraftCenterOfMassを求める
+        aero.IyyAircraftCenterOfMass = aero.IyyAircraftOrigin - aero.massAircraft * Mathf.Pow(aero.centerOfMassAircraft, 2);
+
+        Debug.Log($"IyyAircraftCOG: {aero.IyyAircraftCenterOfMass}");
+    }
+
+    void DynamicPitchInertiaFixedUpdate()
+    {
+        // 変化する重心位置における現在のパイロット（質点）による慣性モーメント IyyPilotを求める
+        float IyyPilot = aero.massPilot * Mathf.Pow(aero.centerOfMassPilot - aero.centerOfMass, 2);
+        // 全備の重心位置と空虚の機体重心位置の差から，平行軸の定理より現在の空虚の機体の慣性モーメント IyyAircraftを求める
+        float IyyAircraft = aero.IyyAircraftCenterOfMass + aero.massAircraft * Mathf.Pow(aero.centerOfMass - aero.centerOfMassAircraft, 2);
+        // これらの和が現在の全備の慣性モーメント Iyy
+        float Iyy = IyyPilot + IyyAircraft;
+
+        Debug.Log($"IyyPilot: {IyyPilot}, IyyAircraft: {IyyAircraft}");
+
+        // ex.) inertiaTensor = new Vector3(961f, 1024f, 80f); //Ixx, Izz, Iyy
+        Vector3 tensor = aero.PlaneRigidbody.inertiaTensor;
+        tensor.z = Iyy;
+        aero.PlaneRigidbody.inertiaTensor = tensor;
+
+        // 慣性主軸の計算方法がわからない
     }
 
     /*

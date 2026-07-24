@@ -132,3 +132,24 @@
 2026/07/22 19:51:06 - GameManager Awake.
 2026/07/22 20:18:59 - GameManager Awake.
 2026/07/22 21:04:50 - GameManager Awake.
+2026/07/24 14:02:11 - GameManager Awake.
+2026/07/24 14:02:57 - [Takeoff!]
+2026/07/24 20:46:44 - GameManager Awake.
+2026/07/24 20:48:32 - GameManager Awake.
+2026/07/24 20:48:41 - [Takeoff!]
+2026/07/24 20:49:24 - [Takeoff!]
+2026/07/24 20:49:40 - [Takeoff!]
+2026/07/24 20:50:25 - [Splashdown!] Flew 311.80m in 44.8s! (WindDirection: 0.0deg, WindSpeed: 0.0m/s)
+2026/07/24 20:50:48 - [Takeoff!]
+2026/07/24 20:50:54 - [Splashdown!] Flew 37.51m in 6.2s! (WindDirection: 0.0deg, WindSpeed: 0.0m/s)
+2026/07/24 20:51:04 - [Takeoff!]
+2026/07/24 20:51:41 - [Splashdown!] Flew 327.45m in 36.8s! (WindDirection: 0.0deg, WindSpeed: 0.0m/s)
+2026/07/24 21:44:58 - GameManager Awake.
+2026/07/24 21:46:52 - [Takeoff!]
+2026/07/24 21:47:31 - [Splashdown!] Flew 299.04m in 38.9s! (WindDirection: 0.0deg, WindSpeed: 0.0m/s)
+2026/07/24 21:51:12 - [Takeoff!]
+2026/07/24 22:01:24 - GameManager Awake.
+2026/07/24 22:01:31 - [Takeoff!]
+2026/07/24 23:19:36 - GameManager Awake.
+2026/07/24 23:19:58 - [Takeoff!]
+2026/07/24 23:20:24 - [Splashdown!] Flew 242.06m in 26.7s! (WindDirection: 0.0deg, WindSpeed: 0.0m/s)

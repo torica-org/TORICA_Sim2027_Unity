@@ -111,6 +111,14 @@ public static class Config
         set => SetProperty(ref mouseSensitivity, value);
     }
 
+    private static readonly bool defaultEnableDynamicPitchInertia = false;
+    private static bool enableDynamicPitchInertia = defaultEnableDynamicPitchInertia;
+    public static bool EnableDynamicPitchInertia
+    {
+        get => enableDynamicPitchInertia;
+        set => SetProperty(ref enableDynamicPitchInertia, value);
+    }
+
     private static readonly bool defaultVrOnlyMode = false;
     private static bool vrOnlyMode = defaultVrOnlyMode;
     public static bool VrOnlyMode
@@ -329,6 +337,7 @@ public static class Config
             mainCamera = CheckContent("MainCamera", defaultMainCamera);
             useMousePitchControl = CheckContent("UseMousePitchControl", defaultUseMousePitchControl);
             mouseSensitivity = CheckContent("MouseSensitivity", defaultMouseSensitivity);
+            enableDynamicPitchInertia = CheckContent("EnableDynamicPitchInertia", defaultEnableDynamicPitchInertia);
             vrOnlyMode = CheckContent("VrOnlyMode", defaultVrOnlyMode);
             serialPort = CheckContent("SerialPort", defaultSerialPort);
             rudderZero = CheckContent("RudderZero", defaultRudderZero);
@@ -456,6 +465,10 @@ public static class Config
 
         addString($"マウス感度を設定する(初期値: {defaultMouseSensitivity:0.0})");
         addConfig("MouseSensitivity", MouseSensitivity.ToString("0.0"));
+        newLine();
+
+        addString($"慣性モーメントを可変にする(初期値: {defaultEnableDynamicPitchInertia}");
+        addConfig("EnableDynamicPitchInertia", EnableDynamicPitchInertia.ToString());
         newLine();
 
         addString($"VR HMDによる重心移動を有効化する(初期値: {defaultVrOnlyMode})");

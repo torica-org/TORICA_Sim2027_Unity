@@ -137,15 +137,18 @@ public class AerodynamicParameters
 
     // ----- 設計値（重心センサーのキャリブレーションや慣性モーメントの算出に使用） -----
     // 全備
-
     public float massDefault; // 設計上の全重量[kg]
     public float centerOfMassDefault; // 設計上の全体重心位置[m]
-    public float IyyDefault; // 設計上のピッチ慣性モーメント[kg*m^2]
+    // public float IyyDefault; // 設計上のピッチ慣性モーメント[kg*m^2] // AircraftDataから持ってこれる
 
     // 空虚
     //public float massAircraft; // 空虚の機体重量[kg] // 既出
     //public float centerOfMassAircraft; // 空虚の機体重心位置[m] // 既出
+    public float IyyAircraftOrigin; // 原点における空虚の慣性モーメント
+    public float IyyAircraftCenterOfMass; // 重心位置における空虚の慣性モーメント
+
     // パイロット
+    // public float centerOfMassPilotDefault; // 設計上のパイロット重心位置[m]
     public float massPilotDefault; // 設計上のパイロット重量[kg]
 
     // ----------------------------------------------------------------------------

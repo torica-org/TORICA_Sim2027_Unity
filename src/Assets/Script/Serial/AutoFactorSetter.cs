@@ -18,6 +18,6 @@ public class AutoFactorSetter : MonoBehaviour
 
     public void OnPush()
     {
-        gm.pilot.ResetPilotPosition();
+        gm.pilot.Reset();
     }
 }

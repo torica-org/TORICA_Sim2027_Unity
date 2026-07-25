@@ -7,7 +7,7 @@ public class HoldingDetector{
 
     private GameParameters game;
     private CameraManager cm;
-    private readonly float IGNORE_INPUT_TIME = 1.0f;
+    private readonly float IGNORE_INPUT_TIME = 3.0f;
 
     private System.Diagnostics.Stopwatch stopwatch;
 
@@ -45,7 +45,7 @@ public class HoldingDetector{
                 {
                     cm.CalibrateVR();
                 }
-                GameManager.instance.pilot.ResetPilotPosition();
+                GameManager.instance.pilot.Reset();
             }
         }
     }

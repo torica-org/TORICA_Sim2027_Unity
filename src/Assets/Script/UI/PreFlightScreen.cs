@@ -41,46 +41,6 @@ public class PreFlightScreen
         staticRect.anchorMin = new Vector2(0, 0.5f); // アンカーの最小値
         staticRect.anchorMax = new Vector2(0, 0.5f); // アンカーの最大値
         staticRect.pivot = new Vector2(0, 0.5f); // ピボット（ボタン自身の基準点）
-
-        DynamicText<float> dynamicText = new(scrollContent, "TextDistUpper", () => { return gm.game.massBackwardFactor; });
-        GameObject textObj = dynamicText.gameObject;
-        RectTransform textRect = dynamicText.rectTransform;
-        textRect.localScale = new Vector3(3, 3, 1); // テキストのサイズを変更する
-        textRect.anchorMin = new Vector2(0, 0); // アンカーの最小値
-        textRect.anchorMax = new Vector2(0, 0); // アンカーの最大値
-        textRect.pivot = new Vector2(0, 0); // ピボット（ボタン自身の基準点）
-        textRect.anchoredPosition = new Vector2(0, 0);
-
-        DynamicDropdown dynamicDropdown = new(scrollContent, "DropdownTest", categories, (x) => { Debug.Log("Selected: " + x); });
-        RectTransform dpdnRect = dynamicDropdown.rectTransform;
-        dpdnRect.anchoredPosition = new Vector2(0, -100);
-        dpdnRect.localScale = new Vector3(3, 3, 1); // ドロップダウンのサイズを変更する
-        dpdnRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 300); // RectTransformのx軸方向のサイズを変更する
-
-        DynamicInputField<float> input = new(scrollContent, "InputTest", "Input Value!!!",
-            (x) => { gm.game.massBackwardFactor = x; }, () => { return gm.game.massBackwardFactor; });
-        RectTransform inputRect = input.rectTransform;
-        inputRect.anchorMin = new Vector2(0.5f, 0.5f);
-        inputRect.anchorMax = new Vector2(0.5f, 0.5f);
-        inputRect.localScale = new Vector3(2, 2, 1);
-
-        DynamicSlider slider = new(scrollContent, "SliderTestUpper",
-            (x) => { gm.game.massBackwardFactor = x; }, () => { return gm.game.massBackwardFactor; }, 0.0f, 1.0f, 0.1f);
-        GameObject sliderObj = slider.gameObject;
-        RectTransform sliderRect = slider.rectTransform;
-        sliderRect.anchoredPosition = new Vector2(300, 200);
-        sliderRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 300); // RectTransformのx軸方向のサイズを変更する
-
-        DynamicText<float> dynamicText1 = new(scrollContent, "TextDistLower", () => { return gm.game.massForwardFactor; }, 50.0f);
-        dynamicText1.rectTransform.anchoredPosition = new Vector2(0, 100);
-
-        DynamicSlider slider1 = new(scrollContent, "SliderTestLower",
-            (x) => { gm.game.massBackwardFactor = x; }, () => { return gm.game.massBackwardFactor; }, 0.0f, 1.0f, 0.1f);
-        slider1.rectTransform.anchoredPosition = new Vector2(300, 100);
-
-        DynamicSlider slider2 = new(scrollContent, "SliderTestLower",
-            (x) => { gm.game.massBackwardFactor = x; }, () => { return gm.game.massBackwardFactor; }, 0.0f, 1.0f, 0.1f);
-        slider2.rectTransform.anchoredPosition = new Vector2(300, -500);
     }
 
     public void VRSettings()

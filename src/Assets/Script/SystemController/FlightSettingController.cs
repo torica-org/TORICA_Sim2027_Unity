@@ -17,12 +17,12 @@ public class FlightSettingController : MonoBehaviour
     {
         FlightSetting = GameObject.Find("FlightSetting");
 
-        GameManager.instance.game.status = GameParameters.Status.Preparation;
         FlightSetting.SetActive(true);
     }
 
     void Start()
     {
+        GameManager.instance.game.status = GameParameters.Status.Preparation;
         SaveCsvScript = this.GetComponent<SaveCsvScript>();
     }
 

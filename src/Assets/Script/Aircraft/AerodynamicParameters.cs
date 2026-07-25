@@ -25,20 +25,12 @@ public class AerodynamicParameters
 
     //計算で用いるセンサー値
 
-    // [System.NonSerialized] public float massLeft;//左ひずみの値[kg]
-    [System.NonSerialized] public float massForward;//右ひずみの値[kg]
-    [System.NonSerialized] public float massBackward;//後方左ひずみの値[kg]
-    // [System.NonSerialized] public float massBackwardLeft;//後方右ひずみの値[kg]
-
-    [System.NonSerialized] public float centerOfMass = 0.000f; // 全体重心計算結果[m] pitchGravity
-    public float centerOfMassPilotRaw = 0.2f; // 補正前重心計算結果[m] pitchGravityPilot
-    [System.NonSerialized] public float centerOfMassPilot; // 補正済重心計算結果[m] 定常状態(pitchGravity=0)のパイロット重心 pitchGravityPilotS
-
-    // GameManager.csへ移動
-    //[System.NonSerialized] public float centerOfMassPilotOffset; // 重心位置のオフセット値[m]
-
-    [System.NonSerialized] public float massLeftRightS;//定常状態の前センサーの値(合計値ではなく一つのセンサーの値)
-    [System.NonSerialized] public float massBackwardS;//定常状態の後センサーの値(合計値ではなく一つのセンサーの値)
+    public float massForward;//右ひずみの値[kg]
+    public float massBackward;//後方左ひずみの値[kg]
+    public float centerOfMass = 1.000f; // 全体重心計算結果[m] pitchGravity
+    public float centerOfMassPilotRaw = 0.2f; // 補正前重心計算結果[m] pitchGravityPilot　// `PilotPosition.cs`へ移動
+    public float centerOfMassPilot; // 補正済重心計算結果[m] 定常状態(pitchGravity=0)のパイロット重心
+    public float centerOfMassPilotOffset; // 重心位置のオフセット値[m]
 
     // Phisics
 
@@ -142,9 +134,9 @@ public class AerodynamicParameters
     // public float IyyDefault; // 設計上のピッチ慣性モーメント[kg*m^2] // AircraftDataから持ってこれる
 
     // 空虚
-    //public float massAircraft; // 空虚の機体重量[kg] // 既出
-    //public float centerOfMassAircraft; // 空虚の機体重心位置[m] // 既出
-    public float IyyAircraftOrigin; // 原点における空虚の慣性モーメント
+    // public float massAircraft; // 空虚の機体重量[kg] // 既出
+    // public float centerOfMassAircraft; // 空虚の機体重心位置[m] // 既出
+    // public float IyyAircraftOrigin; // 原点における空虚の慣性モーメント
     public float IyyAircraftCenterOfMass; // 重心位置における空虚の慣性モーメント
 
     // パイロット

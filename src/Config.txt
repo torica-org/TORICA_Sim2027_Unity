@@ -12,7 +12,7 @@ AircraftModelName = Tatsumi
 AircraftDataName = REWRITE_シミュデータ
 
 // パイロットの体重の上書き[kg](初期値: 0.0)
-OverridePilotMass = 0
+OverridePilotMass = 60
 
 // オーディオの音量(初期値: 50.0)
 AudioVolume = 60
@@ -32,8 +32,8 @@ UseMousePitchControl = True
 // マウス感度を設定する(初期値: 1.0)
 MouseSensitivity = 1.0
 
-// 慣性モーメントを可変にする(初期値: False
-EnableDynamicPitchInertia = False
+// 慣性モーメントを可変にする(初期値: False)
+EnableDynamicPitchInertia = True
 
 // VR HMDによる重心移動を有効化する(初期値: False)
 VrOnlyMode = False

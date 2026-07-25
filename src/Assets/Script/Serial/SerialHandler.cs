@@ -217,17 +217,6 @@ static public class SerialHandler
 
     }
 
-
-
-    static private void Write(string message)
-    {
-        try {
-            serialPort_.Write(message);
-        } catch (System.Exception e) {
-            Debug.LogWarning(e.Message);
-        }
-    }
-
     //受信した信号(message)に対する処理
     static private void OnDataReceived(string message)
     {

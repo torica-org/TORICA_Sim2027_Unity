@@ -68,14 +68,14 @@ public class GameParameters
     // [System.NonSerialized] public float massRightFactor = 1;
     // [System.NonSerialized] public float massBackwardRightFactor = 1;
     // [System.NonSerialized] public float massBackwardLeftFactor = 1;
-    [System.NonSerialized] public float massForwardFactor = 1.0f;
-    [System.NonSerialized] public float massBackwardFactor = 1.0f;
-    [System.NonSerialized] public float DefaultFactor = 1.00f;
+    // [System.NonSerialized] public float massForwardFactor = 1.0f;
+    // [System.NonSerialized] public float massBackwardFactor = 1.0f;
+    // [System.NonSerialized] public float DefaultFactor = 1.00f;
 
     // AerodynamicCalculator.csから移動
     [System.NonSerialized] public float lengthForward = 0.660f;//フレーム前方(フレーム＋センサー部分)から桁(原点)位置[m]
     [System.NonSerialized] public float lengthBackward = -0.330f;//フレーム後方(フレームの端)から桁(原点)位置[m]
-    [System.NonSerialized] public float centerOfMassPilotOffset; // 重心位置のオフセット値[m]
+    // [System.NonSerialized] public float centerOfMassPilotOffset; // 重心位置のオフセット値[m] // `PilotPositionSensor,cs`へ移動
 
     //ジョイスティックの調整用係数(この係数をジョイスティックの値に割る)
     //[System.NonSerialized] public float JoyStickFactor = 450;

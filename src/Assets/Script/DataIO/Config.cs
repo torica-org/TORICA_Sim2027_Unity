@@ -330,7 +330,7 @@ public static class Config
 
             aircraftModelName = CheckContent("AircraftModelName", defaultAircraftModelName);
             aircraftDataName = CheckContent("AircraftDataName", defaultAircraftDataName);
-            overridePilotMass = CheckContent("PilotMass", defaultOverridePilotMass);
+            overridePilotMass = CheckContent("OverridePilotMass", defaultOverridePilotMass);
             audioVolume = CheckContent("AudioVolume", defaultAudioVolume);
             showHUD = CheckContent("ShowHUD", defaultShowHUD);
             showHorizontalLine = CheckContent("ShowHorizontalLine", defaultShowHorizontalLine);
@@ -467,7 +467,7 @@ public static class Config
         addConfig("MouseSensitivity", MouseSensitivity.ToString("0.0"));
         newLine();
 
-        addString($"慣性モーメントを可変にする(初期値: {defaultEnableDynamicPitchInertia}");
+        addString($"慣性モーメントを可変にする(初期値: {defaultEnableDynamicPitchInertia})");
         addConfig("EnableDynamicPitchInertia", EnableDynamicPitchInertia.ToString());
         newLine();
 

@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour
     public GameParameters game;
     public AerodynamicParameters aero;
     public AerodynamicCalculator calc;
-    public PilotPositionResetter pilot;
+    public PilotPositionSensor pilot;
     public HoldingDetector hold;
     public CameraManager cm;
     private GameObject FlightSetting = null;

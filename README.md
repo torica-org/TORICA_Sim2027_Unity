@@ -1,5 +1,7 @@
 # Name
-TORICA simulator(Made from BRSimulator https://github.com/mtkbirdman/BRSimulator/tree/main)
+TORICA Simulator(Made from BRSimulator https://github.com/mtkbirdman/BRSimulator/tree/main)
+
+Previous repository: <https://github.com/torica-org/TORICA_Sim_Unity>
 
 # Overview
 鳥人間コンテスト　滑空機部門　パイロット練習用フライトシミュレーター

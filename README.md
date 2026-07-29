@@ -1,5 +1,5 @@
 # Name
-TORICA Simulator (based on [BR Simulator] (https://github.com/mtkbirdman/BRSimulator/tree/main))
+TORICA Simulator (based on [BR Simulator](https://github.com/mtkbirdman/BRSimulator/tree/main))
 
 Previous repository: <https://github.com/torica-org/TORICA_Sim_Unity>
 
@@ -9,6 +9,9 @@ Previous repository: <https://github.com/torica-org/TORICA_Sim_Unity>
 # Requirement
 - Windows 11
 - Unity 2021.3.45f1
+- **For VR Mode:**
+  - SteamVR
+  - HMD連携アプリ (e.g., PICO Connect, Meta Quest Link)
 
 # Usage
 起動するとフライト設定画面になる。

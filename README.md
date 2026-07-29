@@ -1,5 +1,5 @@
 # Name
-TORICA Simulator(Made from BRSimulator https://github.com/mtkbirdman/BRSimulator/tree/main)
+TORICA Simulator (based on [BR Simulator] (https://github.com/mtkbirdman/BRSimulator/tree/main))
 
 Previous repository: <https://github.com/torica-org/TORICA_Sim_Unity>
 

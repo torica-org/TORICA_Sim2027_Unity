@@ -15,7 +15,7 @@ AircraftDataName = REWRITE_シミュデータ
 OverridePilotMass = 60
 
 // オーディオの音量(初期値: 50.0)
-AudioVolume = 60
+AudioVolume = 0
 
 // 飛行中の画面の周囲に情報を表示する(True/False)
 ShowHUD = True
@@ -27,7 +27,7 @@ ShowHorizontalLine = False
 MainCamera = True
 
 // マウスによる重心移動を有効化する(True/False)
-UseMousePitchControl = True
+UseMousePitchControl = False
 
 // マウス感度を設定する(初期値: 1.0)
 MouseSensitivity = 1.0

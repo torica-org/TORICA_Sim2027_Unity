@@ -27,7 +27,7 @@ public class AerodynamicParameters
 
     public float massForward;//右ひずみの値[kg]
     public float massBackward;//後方左ひずみの値[kg]
-    public float centerOfMass = 1.000f; // 全体重心計算結果[m] pitchGravity
+    public float centerOfMass = 0.000f; // 全体重心計算結果[m] pitchGravity
     public float centerOfMassPilotRaw = 0.2f; // 補正前重心計算結果[m] pitchGravityPilot　// `PilotPosition.cs`へ移動
     public float centerOfMassPilot; // 補正済重心計算結果[m] 定常状態(pitchGravity=0)のパイロット重心
     public float centerOfMassPilotOffset; // 重心位置のオフセット値[m]

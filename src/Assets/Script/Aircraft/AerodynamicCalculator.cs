@@ -24,10 +24,15 @@ public class AerodynamicCalculator
     private bool DynamicPitchInertiaInitialized = false;
 
     // テイクオフ時の推進力計算に使用する定数
-    private const float TakeoffPowerMultiplier = 1.30f;
-    private const float TakeoffPlatformLength = 10f;
-    private const float MinimumTakeoffPowerRatio = 0.3f;
 
+    // 複数の倍率でテイクオフ挙動を検証し、実際の挙動に最も近かった1.30を採用
+    private const float TakeoffPowerMultiplier = 1.30f;
+
+    // 離陸台の長さ [m]
+    private const float TakeoffPlatformLength = 10f;
+
+    // 複数の割合を検証し、実際の挙動に最も近かった30%を離陸台終端の推進力として採用
+    private const float MinimumTakeoffPowerRatio = 0.3f;
     public AerodynamicCalculator(GameParameters _game, AerodynamicParameters _aero)
     {
         game = _game;
@@ -156,10 +161,10 @@ public class AerodynamicCalculator
             // マイコン側でkgに変換する
             gm.pilot.UpdateLoadcellFactor();
 
-            aero.massForward  = SerialHandler.massForwardRaw;
+            aero.massForward = SerialHandler.massForwardRaw;
             aero.massBackward = SerialHandler.massBackwardRaw;
 
-            aero.massForward  *= gm.pilot.loadcellFactor;
+            aero.massForward *= gm.pilot.loadcellFactor;
             aero.massBackward *= gm.pilot.loadcellFactor;
 
             aero.massPilot = aero.massForward + aero.massBackward;

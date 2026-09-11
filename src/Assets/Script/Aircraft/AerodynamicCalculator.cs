@@ -23,6 +23,11 @@ public class AerodynamicCalculator
 
     private bool DynamicPitchInertiaInitialized = false;
 
+    // テイクオフ時の推進力計算に使用する定数
+    private const float TakeoffPowerMultiplier = 1.30f;// 重みづけにおいて実際の挙動に最も近かった1.3を採用
+    private const float TakeoffPlatformLength = 10f;// 離陸台の長さ [m]
+    private const float MinimumTakeoffPowerRatio = 0.3f;// 実際の挙動に最も近かった0.3を離陸台終端の推進力として採用
+    
     public AerodynamicCalculator(GameParameters _game, AerodynamicParameters _aero)
     {
         game = _game;
@@ -151,10 +156,10 @@ public class AerodynamicCalculator
             // マイコン側でkgに変換する
             gm.pilot.UpdateLoadcellFactor();
 
-            aero.massForward  = SerialHandler.massForwardRaw;
+            aero.massForward = SerialHandler.massForwardRaw;
             aero.massBackward = SerialHandler.massBackwardRaw;
 
-            aero.massForward  *= gm.pilot.loadcellFactor;
+            aero.massForward *= gm.pilot.loadcellFactor;
             aero.massBackward *= gm.pilot.loadcellFactor;
 
             aero.massPilot = aero.massForward + aero.massBackward;
@@ -356,7 +361,7 @@ public class AerodynamicCalculator
         float q = aero.Aircraft.transform.InverseTransformDirection(aero.PlaneRigidbody.angularVelocity).z * Mathf.Rad2Deg;
         float r = aero.Aircraft.transform.InverseTransformDirection(aero.PlaneRigidbody.angularVelocity).y * Mathf.Rad2Deg;
         float hE = aero.PlaneRigidbody.position.y;
-        float Distance = (aero.PlaneRigidbody.position - GameManager.instance.game.PlatformPosition).magnitude - 10f;
+        float Distance = (aero.PlaneRigidbody.position - GameManager.instance.game.PlatformPosition).magnitude - TakeoffPlatformLength;
 
         // Force and Momentum
         Vector3 AerodynamicForce = Vector3.zero;
@@ -434,7 +439,10 @@ public class AerodynamicCalculator
             float W = aero.PlaneRigidbody.mass * Physics.gravity.magnitude;//重力
             float L = 0.5f * aero.rho * aero.Airspeed * aero.Airspeed * aero.Sw * (aero.Cx * Mathf.Sin(Mathf.Deg2Rad * aero.theta) - aero.Cz * Mathf.Cos(Mathf.Deg2Rad * aero.theta));//揚力
             float N = (W - L) * Mathf.Cos(Mathf.Deg2Rad * 3.5f); // N=(W-L)*cos(3.5deg)//翼持ちの抵抗力
-            float P = (aero.PlaneRigidbody.mass * Config.TakeoffSpeed * Config.TakeoffSpeed) / (2f * 10f); // P=m*Vto*Vto/2*L//推進力
+            float BaseP = TakeoffPowerMultiplier * (aero.PlaneRigidbody.mass * Config.TakeoffSpeed * Config.TakeoffSpeed) / (2f * TakeoffPlatformLength); // 等加速度運動の式 Vto² = 2aL から求めた推進力 mVto² / (2L) に、補正倍率を適用
+
+            float progress = (Distance + TakeoffPlatformLength) / TakeoffPlatformLength; // 離陸台の始点を0、終端を1として現在位置を正規化
+            float P = BaseP * (MinimumTakeoffPowerRatio + (1f - MinimumTakeoffPowerRatio) * Mathf.Cos(progress * Mathf.PI / 2f)); // 推進力を、始点のBasePから終端のBaseP×MinimumTakeoffPowerRatioまで滑らかに減衰
 
             //離陸方向をYaw回転に合わせて水平方向に修正
             //Vector3 takeoffDirection = Quaternion.Euler(0f, Config.TakeoffYaw, 0f) * Vector3.forward;
@@ -521,8 +529,8 @@ public class AerodynamicCalculator
         //}
         //Debug.Log(AerodynamicForce.z);
 
-       　if (Config.EnableDynamicPitchInertia)　// ピッチの慣性モーメントを可変に
-       　{
+        if (Config.EnableDynamicPitchInertia)　// ピッチの慣性モーメントを可変に
+        {
             if (!DynamicPitchInertiaInitialized)
             {
                 DynamicPitchInertiaInitialize();
@@ -531,7 +539,7 @@ public class AerodynamicCalculator
             {
                 DynamicPitchInertiaFixedUpdate();
             }
-       　}
+        }
 
         aero.PlaneRigidbody.AddRelativeForce(AerodynamicForce, ForceMode.Force);
         aero.PlaneRigidbody.AddRelativeTorque(AerodynamicMomentum, ForceMode.Force);

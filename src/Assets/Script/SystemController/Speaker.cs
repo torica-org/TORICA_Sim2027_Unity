@@ -68,11 +68,11 @@ public class Speaker : MonoBehaviour
         {
             if (aero.TakeOff)
             {
-                if (aero.Airspeed > 11f)
+                if (aero.theta > 0f)
                 {
                     frequency = 440f;
                 }
-                else if (aero.Airspeed > 9f)
+                else if (aero.theta > -1f)
                 {
                     frequency = 880f;
                 }

@@ -363,6 +363,8 @@ public class AerodynamicCalculator
         float hE = aero.PlaneRigidbody.position.y;
         float Distance = (aero.PlaneRigidbody.position - GameManager.instance.game.PlatformPosition).magnitude - TakeoffPlatformLength;
 
+        CalculateRotation();
+
         // Force and Momentum
         Vector3 AerodynamicForce = Vector3.zero;
         Vector3 AerodynamicMomentum = Vector3.zero;
@@ -434,7 +436,6 @@ public class AerodynamicCalculator
         if (GameManager.instance.game.FlightMode == "BirdmanRally" && Distance < -0.5f)
         {
             //Debug.Log("Dist: " + Distance);
-            CalculateRotation();
 
             float W = aero.PlaneRigidbody.mass * Physics.gravity.magnitude;//重力
             float L = 0.5f * aero.rho * aero.Airspeed * aero.Airspeed * aero.Sw * (aero.Cx * Mathf.Sin(Mathf.Deg2Rad * aero.theta) - aero.Cz * Mathf.Cos(Mathf.Deg2Rad * aero.theta));//揚力

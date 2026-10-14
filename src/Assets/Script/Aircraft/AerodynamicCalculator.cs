@@ -389,8 +389,7 @@ public class AerodynamicCalculator
         float ug = LocalGust.x + 1e-10f;
         float vg = -LocalGust.z;
         float wg = -LocalGust.y;
-        if (ug > 0) { aero.LocalGustDirection = Mathf.Atan(vg / (ug + 1e-10f)) * Mathf.Rad2Deg; }
-        else { aero.LocalGustDirection = Mathf.Atan(vg / (ug + 1e-10f)) * Mathf.Rad2Deg + vg / Mathf.Abs((vg + 1e-10f)) * 180; }
+        aero.LocalGustDirection = Mathf.Atan2(vg,ug) * Mathf.Rad2Deg;
 
         // Calculate angles
         aero.Airspeed = Mathf.Sqrt((u + ug) * (u + ug) + (v + vg) * (v + vg) + (w + wg) * (w + wg));
@@ -400,10 +399,10 @@ public class AerodynamicCalculator
             aero.ALT = aero.SensorPoint.transform.position.y;
         }
         //Debug.Log(Groundspeed);
-        aero.alpha = Mathf.Atan((w + wg) / (u + ug)) * Mathf.Rad2Deg;
+        aero.alpha = Mathf.Atan2(w + wg , u + ug) * Mathf.Rad2Deg;
         //Debug.Log(alpha);
 
-        aero.beta = Mathf.Atan((v + vg) / aero.Airspeed) * Mathf.Rad2Deg;
+        aero.beta = Mathf.Atan2(v + vg , Mathf.Sqrt((u + ug) * (u + ug)+ (w + wg) * (w + wg))) * Mathf.Rad2Deg;
 
         // Wing and Tail
         aero.CLw = aero.CLw0 + aero.aw * (aero.alpha - aero.alpha0);
@@ -560,9 +559,9 @@ public class AerodynamicCalculator
         float C13 = 2f * (q1 * q3 - q2 * q4);
         float C32 = 2f * (q2 * q3 - q1 * q4);
 
-        aero.phi = -Mathf.Atan(-C32 / C22) * Mathf.Rad2Deg;
+        aero.phi = -Mathf.Atan2(-C32 , C22) * Mathf.Rad2Deg;
         aero.theta = -Mathf.Asin(C12) * Mathf.Rad2Deg;
-        aero.psi = -Mathf.Atan(-C13 / C11) * Mathf.Rad2Deg;
+        aero.psi = -Mathf.Atan2(-C13 , C11) * Mathf.Rad2Deg;
     }
 
     void DynamicPitchInertiaInitialize()

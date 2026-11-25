@@ -7,15 +7,15 @@ AircraftModelName = Tatsumi
 // --------------------------------------------------------
 // ~Tatsumi, ARG-2, Aria, Camellia, Gaillardia, Gardenia,
 // ORCA18, ORCA22, QX-18, QX-19, QX-20,
-// REWRITE_シミュデータ, UL01B,
+// REWRITE, UL01B,
 // --------------------------------------------------------
-AircraftDataName = REWRITE_シミュデータ
+AircraftDataName = REWRITE
 
 // パイロットの体重の上書き[kg](初期値: 0.0)
 OverridePilotMass = 60
 
 // オーディオの音量(初期値: 50.0)
-AudioVolume = 60
+AudioVolume = 0
 
 // 飛行中の画面の周囲に情報を表示する(True/False)
 ShowHUD = True
@@ -27,7 +27,7 @@ ShowHorizontalLine = False
 MainCamera = True
 
 // マウスによる重心移動を有効化する(True/False)
-UseMousePitchControl = False
+UseMousePitchControl = True
 
 // マウス感度を設定する(初期値: 1.0)
 MouseSensitivity = 1.0
@@ -55,11 +55,20 @@ RudderReverse = True
 // フライトログの出力を有効化する(True/False)
 ExportLog = False
 
+// 乱流の有効化(True/False)
+EnableTurbulence = True
+
+// 乱流強度倍率(乱流の強さ. 0.6から1.0くらいが現実的 または練習として妥当)
+TurbulenceIntensityScale = 0.6
+
+// 乱流スケール長倍率(どれくらい同じ乱流が続くか よほどのことがない限りは1.0)
+TurbulenceLengthScale = 1
+
 // 風速[m/s](初期値: 0.0)
-WindSpeed = 0.0
+WindSpeed = 0.9
 
 // 風上[deg](範囲: [L]-180.0 ↔ [R]180.0 / 初期値: 0.0)
-WindDirection = 0.0
+WindDirection = -15.2
 
 // 風の範囲指定(※「風速」「風上」の設定を上書きします / 初期値: None)
 // 以下の形式に従って入力してください（数値範囲はマイクラと同様）:
@@ -71,28 +80,19 @@ WindDirection = 0.0
 WindRangeSpec = None
 
 // 離陸時のスピード[m/s](初期値: 6.5)
-TakeoffSpeed = 5.8
+TakeoffSpeed = 6.2
 
 // 離陸時のロール[deg](初期値: 0.0)
-TakeoffRoll = 0.0
+TakeoffRoll = 0.2
 
 // 離陸時のピッチ[deg](初期値: 0.0)
 TakeoffPitch = 0.0
 
 // 離陸時のヨー[deg](初期値: 0.0)
-TakeoffYaw = 0.0
+TakeoffYaw = -0.6
 
 // 定常風をランダム化する(True/False)
 RandomizeWind = False
-
-
-
-
-
-
-
-
-
 
 
 

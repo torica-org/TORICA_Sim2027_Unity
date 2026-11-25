@@ -167,6 +167,30 @@ public static class Config
         set => SetProperty(ref exportLog, value);
     }
 
+    private static readonly bool defaultEnableTurbulence = true;
+    private static bool enableTurbulence = defaultEnableTurbulence;
+    public static bool EnableTurbulence
+    {
+        get => enableTurbulence;
+        set => SetProperty(ref enableTurbulence, value);
+    }
+
+    private static readonly float defaultTurbulenceIntensityScale = 0.6f;
+    private static float turbulenceIntensityScale = defaultTurbulenceIntensityScale;
+    public static float TurbulenceIntensityScale
+    {
+        get => turbulenceIntensityScale;
+        set => SetProperty(ref turbulenceIntensityScale, value);
+    }
+
+    private static readonly float defaultTurbulenceLengthScale = 1.0f;
+    private static float turbulenceLengthScale = defaultTurbulenceLengthScale;
+    public static float TurbulenceLengthScale
+    {
+        get => turbulenceLengthScale;
+        set => SetProperty(ref turbulenceLengthScale, value);
+    }
+
     private static readonly float defaultWindSpeed = 0.0f;
     private static float windSpeed = defaultWindSpeed;
     public static float WindSpeed
@@ -345,6 +369,9 @@ public static class Config
             rudderReverse = CheckContent("RudderReverse", defaultRudderReverse);
             exportLog = CheckContent("ExportLog", defaultExportLog);
             randomizeWind = CheckContent("RandomizeWind", defaultRandomizeWind);
+            enableTurbulence = CheckContent("EnableTurbulence", defaultEnableTurbulence);
+            turbulenceIntensityScale = CheckContent("TurbulenceIntensityScale", defaultTurbulenceIntensityScale);
+            turbulenceLengthScale = CheckContent("TurbulenceLengthScale", defaultTurbulenceLengthScale);
             windSpeed = CheckContent("WindSpeed", defaultWindSpeed);
             windDirection = CheckContent("WindDirection", defaultWindDirection);
             windRangeSpec = CheckContent("WindRangeSpec", defaultWindRangeSpec);
@@ -495,6 +522,16 @@ public static class Config
 
         addString("フライトログの出力を有効化する(True/False)");
         addConfig("ExportLog", ExportLog.ToString());
+        newLine();
+
+        addString("乱流の有効化(True/False)");
+        addConfig("EnableTurbulence", EnableTurbulence.ToString());
+        newLine();
+        addString("乱流強度倍率(乱流の強さ. 0.6から1.0くらいが現実的 または練習として妥当)");
+        addConfig("TurbulenceIntensityScale", TurbulenceIntensityScale.ToString());
+        newLine();
+        addString("乱流スケール長倍率(どれくらい同じ乱流が続くか よほどのことがない限りは1.0)");
+        addConfig("TurbulenceLengthScale", TurbulenceLengthScale.ToString());
         newLine();
 
         addString($"風速[m/s](初期値: {defaultWindSpeed:0.0})");

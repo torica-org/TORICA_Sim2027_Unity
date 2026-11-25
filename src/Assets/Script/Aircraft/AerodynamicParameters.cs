@@ -117,7 +117,9 @@ public class AerodynamicParameters
 
     // Gust
 
-    public Vector3 Gust = Vector3.zero; // Gust [m/s]
+    public Vector3 Gust = Vector3.zero; // 風 (風上向き)[m/s]
+    [System.NonSerialized] public Vector3 TurbulenceVelocity = Vector3.zero; // 乱流風速（空気が流れる向き、Unityワールド座標）[m/s]
+    [System.NonSerialized] public Vector3 TurbulenceAngularVelocity = Vector3.zero; // 突風勾配による等価角速度（Unityワールド座標）[rad/s]
 
     // Rotation
 

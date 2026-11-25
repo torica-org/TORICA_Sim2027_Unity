@@ -17,6 +17,23 @@ public class AerodynamicCalculator
     //protected bool CanReadCsv = false;
     private GameParameters game;
     private AerodynamicParameters aero;
+    // 10 ft [m]。水面付近ではこの高度で乱流係数を評価する（TORICAの暫定処理）。
+    private const double MinimumTurbulenceHeight = 3.048;
+    private System.Random turbulenceRandom;
+    private struct TurbulenceState
+    {
+        public double longitudinal;
+        public double roll;
+        public double pitch;
+        public double yaw;
+        public double lateralFirst;
+        public double lateralSecond;
+        public double verticalFirst;
+        public double verticalSecond;
+        public double previousV;
+        public double previousW;
+    }
+    private TurbulenceState turbulenceState;
 
     private GameManager gm = GameManager.instance; // MyGameManagerをgmとして宣言
     private CameraManager cm;
@@ -300,6 +317,17 @@ public class AerodynamicCalculator
 
     public void CalculatorInitialize()
     {
+        DateTime now = DateTime.Now;
+        int seed = now.Hour * 100 + now.Minute;
+        turbulenceRandom = new System.Random(seed);
+        turbulenceState = default;
+        aero.TurbulenceVelocity = Vector3.zero;
+        aero.TurbulenceAngularVelocity = Vector3.zero;
+        if (Config.EnableTurbulence)
+        {
+            Debug.Log($"Dryden seed {seed:D4}");
+        }
+
         // Set take-off speed
         if (GameManager.instance.game.FlightMode == "BirdmanRally")
         {
@@ -383,13 +411,24 @@ public class AerodynamicCalculator
         //}
 
         // Gust
-        aero.LocalGustMag = (Wind.GetMagnitude(Distance) + GameManager.instance.game.GustRandValue) * Mathf.Pow((hE / aero.hE0), 1f / 7f);
-        aero.Gust = Quaternion.AngleAxis(Wind.GetDirection(Distance), Vector3.up) * (Vector3.right * aero.LocalGustMag);
+        float referenceWind = Wind.GetMagnitude(Distance) + GameManager.instance.game.GustRandValue;
+        float windDirection = Wind.GetDirection(Distance);
+        aero.LocalGustMag = referenceWind * Mathf.Pow((hE / aero.hE0), 1f / 7f);
+        aero.Gust = Quaternion.AngleAxis(windDirection, Vector3.up) * (Vector3.right * aero.LocalGustMag);
         Vector3 LocalGust = aero.Aircraft.transform.InverseTransformDirection(aero.Gust);
+        aero.LocalGustDirection = Mathf.Atan2(-LocalGust.z, LocalGust.x + 1e-10f) * Mathf.Rad2Deg;
+        Turbulence(hE, referenceWind, windDirection);
+        if (Config.EnableTurbulence)
+        {
+            LocalGust -= aero.Aircraft.transform.InverseTransformDirection(aero.TurbulenceVelocity);
+            Vector3 rotation = aero.Aircraft.transform.InverseTransformDirection(aero.TurbulenceAngularVelocity);
+            p += rotation.x * Mathf.Rad2Deg;
+            q -= rotation.z * Mathf.Rad2Deg;
+            r -= rotation.y * Mathf.Rad2Deg;
+        }
         float ug = LocalGust.x + 1e-10f;
         float vg = -LocalGust.z;
         float wg = -LocalGust.y;
-        aero.LocalGustDirection = Mathf.Atan2(vg,ug) * Mathf.Rad2Deg;
 
         // Calculate angles
         aero.Airspeed = Mathf.Sqrt((u + ug) * (u + ug) + (v + vg) * (v + vg) + (w + wg) * (w + wg));
@@ -545,6 +584,94 @@ public class AerodynamicCalculator
         aero.PlaneRigidbody.AddRelativeTorque(AerodynamicMomentum, ForceMode.Force);
         aero.PlaneRigidbody.AddForce(TakeoffForce, ForceMode.Force);
         aero.nz = AerodynamicForce.y / (aero.PlaneRigidbody.mass * Physics.gravity.magnitude);
+    }
+
+    // Dryden乱流モデルによって、「風」と「機体にかかる回転」を計算する.
+    // Dryden乱流モデルにおけるスケールや定数はMIL-F-8785Cに従う.
+    private void Turbulence(float height, float referenceWind, float windDirection)
+    {
+        double lengthScale = Config.TurbulenceLengthScale;
+        double intensity = Config.TurbulenceIntensityScale;
+        double speed = (aero.PlaneRigidbody.velocity + aero.Gust).magnitude;
+        double span = aero.bw;
+        double dt = Time.fixedDeltaTime;
+        if (!Config.EnableTurbulence || !(referenceWind > 0 && aero.hE0 > 0 && span > 0 && lengthScale > 0 && intensity > 0 && speed > 0 && dt > 0) || double.IsInfinity(speed + span + lengthScale + intensity + referenceWind) || float.IsNaN(height) || float.IsInfinity(height))
+        {
+            turbulenceState = default;
+            aero.TurbulenceVelocity = Vector3.zero;
+            aero.TurbulenceAngularVelocity = Vector3.zero;
+            return;
+        }
+
+        double h = Math.Max(MinimumTurbulenceHeight, height);
+        // 0.177 と 0.000823 は規格の係数。原式は高度を ft で取るので、h [m] を 0.3048 [m/ft] で割る。
+        double factor = 0.177 + 0.000823 * h / 0.3048;
+        double verticalLength = lengthScale * h;
+        double horizontalLength = verticalLength / Math.Pow(factor, 1.2);
+        // 規格の基準風速 W20 は高度20 ft（6.096 m）の値。hE0 からの換算には既存の平均風の1/7乗則を使う。
+        double wind20 = referenceWind * Math.Pow(6.096 / aero.hE0, 1.0 / 7);
+        double sigmaW = 0.1 * wind20 * intensity;
+        double sigmaHorizontal = sigmaW / Math.Pow(factor, 0.4);
+        double rollLength = 4 * span / Math.PI;
+        // 0.4π は規格のロールの片側スペクトルを分散に換算した係数（0.8 × π/2）。
+        double sigmaRoll = sigmaW * Math.Sqrt(0.4 * Math.PI / (verticalLength * rollLength) * Math.Pow(verticalLength / rollLength, 1.0 / 3));
+        double travel = speed * dt;
+
+        double u = sigmaHorizontal * StepFirstOrder(ref turbulenceState.longitudinal, travel / horizontalLength);
+        double p = sigmaRoll * StepFirstOrder(ref turbulenceState.roll, travel / rollLength);
+        double v = sigmaHorizontal * StepSecondOrder(ref turbulenceState.lateralFirst, ref turbulenceState.lateralSecond, travel / horizontalLength);
+        double w = sigmaW * StepSecondOrder(ref turbulenceState.verticalFirst, ref turbulenceState.verticalSecond, travel / verticalLength);
+        double q = StepGustGradient(ref turbulenceState.pitch, turbulenceState.previousW - w, travel, rollLength);
+        double r = StepGustGradient(ref turbulenceState.yaw, v - turbulenceState.previousV, travel, 3 * span / Math.PI);
+        turbulenceState.previousW = w;
+        turbulenceState.previousV = v;
+
+        Quaternion windFrame = Quaternion.AngleAxis(windDirection + 180f, Vector3.up);
+        aero.TurbulenceVelocity = windFrame * new Vector3((float)u, (float)-w, (float)-v);
+        aero.TurbulenceAngularVelocity = windFrame * new Vector3((float)-p, (float)r, (float)q);
+    }
+
+    private double StepFirstOrder(ref double state, double step)
+    {
+        double decay = Math.Exp(-step);
+        // step = Δt/τ が小さいときは、1−exp(−2step) の桁落ちを避ける。
+        double variance = step < 1e-6 ? 2 * step * (1 - step) : 1 - decay * decay;
+        state = decay * state + Math.Sqrt(variance) * NextGaussian();
+        return state;
+    }
+
+    private double StepSecondOrder(ref double first, ref double second, double step)
+    {
+        double decay = Math.Exp(-step);
+        double squared = decay * decay;
+        // 二段を同じ白色雑音で駆動したときの1ステップの分散（q11, q22）と共分散（q12）。
+        double q11 = (1 - squared) / 2;
+        double q12 = (q11 - step * squared) / 2;
+        double q22 = q12 - step * step * squared / 2;
+        if (step < 0.001)
+        {
+            q11 = step * (1 - step);
+            q12 = step * step * (0.5 - 2 * step / 3);
+            q22 = step * step * step * (1.0 / 3 - step / 2);
+        }
+        double stdFirst = Math.Sqrt(q11);
+        double shared = q12 / stdFirst;
+        double noise = NextGaussian();
+        second = decay * (second + step * first) + shared * noise + Math.Sqrt(Math.Max(0, q22 - shared * shared)) * NextGaussian();
+        first = decay * first + stdFirst * noise;
+        // 横・鉛直のDrydenフィルタの分子 1 + √3 τs に対応する重み。
+        return Math.Sqrt(3) * first + (1 - Math.Sqrt(3)) * second;
+    }
+
+    private static double StepGustGradient(ref double state, double windChange, double travel, double length)
+    {
+        state = ((2 * length - travel) * state + 2 * windChange) / (2 * length + travel);
+        return state;
+    }
+
+    private double NextGaussian()
+    {
+        return Math.Sqrt(-2 * Math.Log(1 - turbulenceRandom.NextDouble())) * Math.Cos(2 * Math.PI * turbulenceRandom.NextDouble());
     }
 
     void CalculateRotation()

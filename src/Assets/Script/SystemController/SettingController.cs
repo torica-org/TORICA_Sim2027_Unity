@@ -28,8 +28,8 @@ public class SettingController : MonoBehaviour
             GameManager.instance.game.status = GameParameters.Status.Flight;
             Setting.SetActive(true);
         }
-        // if(Input.GetKeyDown("c")){
-        //     Config.UseMousePitchControl = !Config.UseMousePitchControl;
-        // }
+        if(Input.GetKeyDown(KeyCode.F7)){
+             Config.UseMousePitchControl = !Config.UseMousePitchControl;
+        }
     }
 }
